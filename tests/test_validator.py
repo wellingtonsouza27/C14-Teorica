@@ -32,3 +32,18 @@ def test_negativo_sem_numero():
 
 def test_negativo_sem_simbolo():
     assert validar_senha("Senha1234") == False
+
+def test_negativo_senha_vazia():
+    assert validar_senha("") == False
+
+def test_negativo_so_numeros():
+    assert validar_senha("12345678") == False
+
+def test_negativo_so_letras():
+    assert validar_senha("SomenteLetras") == False
+
+def test_negativo_so_simbolos():
+    assert validar_senha("!!!!!!!!") == False
+
+def test_negativo_com_espaco():
+    assert validar_senha("Senha 123!") == False
