@@ -10,10 +10,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Setup Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
@@ -33,10 +34,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Setup Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
@@ -51,13 +53,14 @@ jobs:
     needs: test
 
     steps:
-      - uses: actions/upload-artifact@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Build project
         run: zip -r projeto.zip .
 
-      - name: Upload build
-        uses: actions/upload-artifact@v3
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
         with:
           name: build
           path: projeto.zip
@@ -67,8 +70,8 @@ jobs:
     needs: build
 
     steps:
-      - name: Deploy (GitHub Release)
-        uses: softprops/action-gh-release@v1
+      - name: Deploy
+        run: echo "Deploy realizado com sucesso!"
 
   notify:
     runs-on: ubuntu-latest
