@@ -1,0 +1,76 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run tests
+        run: pytest --junitxml=report.xml
+
+      - name: Upload test report
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-report
+          path: report.xml
+
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install flake8
+        run: pip install flake8
+
+      - name: Run lint
+        run: flake8 src
+
+  build:
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Build project
+        run: zip -r projeto.zip .
+
+      - name: Upload build
+        uses: actions/upload-artifact@v3
+        with:
+          name: build
+          path: projeto.zip
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Deploy (GitHub Release)
+        uses: softprops/action-gh-release@v1
+
+  notify:
+    runs-on: ubuntu-latest
+    needs: [test, build, deploy]
+
+    steps:
+      - name: Notificação
+        env:
+          EMAIL: ${{ secrets.EMAIL }}
+        run: echo "Pipeline finalizado! Email enviado para $EMAIL"
